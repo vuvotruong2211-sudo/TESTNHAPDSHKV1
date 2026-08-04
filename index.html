@@ -115,11 +115,18 @@
       <div id="resultList" style="margin-top:14px;"></div>
     </div>
 
-    <div class="footer-note">Mã nhân viên phụ trách: <b><?= nhanVien ?></b></div>
+    <div class="footer-note">Mã nhân viên phụ trách: <b id="nvDisplay">...</b></div>
   </div>
 
   <script>
-    const NHAN_VIEN = "<?= nhanVien ?>";
+    // ⚠️ THAY URL DƯỚI ĐÂY bằng URL Web App Apps Script của anh (kết thúc bằng /exec)
+    const API_URL = "https://script.google.com/macros/s/XXXX/exec";
+
+    // Lấy mã nhân viên từ query string trên chính link GitHub Pages, ví dụ:
+    // https://vuvotruong2211-sudo.github.io/?nv=NV001
+    const urlParams = new URLSearchParams(window.location.search);
+    const NHAN_VIEN = urlParams.get('nv') || 'CHUA_GAN';
+    document.getElementById('nvDisplay').textContent = NHAN_VIEN;
 
     function showTab(tab) {
       document.getElementById('tabDat').classList.toggle('active', tab === 'dat');
@@ -148,26 +155,14 @@
         return;
       }
 
-      document.getElementById('btnSubmit').disabled = true;
-      document.getElementById('btnSubmit').textContent = 'Đang gửi...';
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = 'Đang gửi...';
 
-      google.script.run
-        .withSuccessHandler(function (res) {
-          showMsg('msgDat', res.message, true);
-          document.getElementById('btnSubmit').disabled = false;
-          document.getElementById('btnSubmit').textContent = 'GỬI THÔNG TIN ĐẶT CHỖ';
-          document.getElementById('hoTen').value = '';
-          document.getElementById('ngayDi').value = '';
-          document.getElementById('tuyen').value = '';
-          document.getElementById('slKhach').value = 1;
-          document.getElementById('yeuCau').value = '';
-        })
-        .withFailureHandler(function (err) {
-          showMsg('msgDat', 'Có lỗi xảy ra: ' + err.message, false);
-          document.getElementById('btnSubmit').disabled = false;
-          document.getElementById('btnSubmit').textContent = 'GỬI THÔNG TIN ĐẶT CHỖ';
-        })
-        .submitBooking({
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // tránh preflight CORS
+        body: JSON.stringify({
           nhanVien: NHAN_VIEN,
           sdt: sdt,
           hoTen: hoTen,
@@ -175,6 +170,27 @@
           tuyen: tuyen,
           slKhach: slKhach,
           yeuCau: yeuCau
+        })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          btn.disabled = false;
+          btn.textContent = 'GỬI THÔNG TIN ĐẶT CHỖ';
+          if (res.ok) {
+            showMsg('msgDat', res.message, true);
+            document.getElementById('hoTen').value = '';
+            document.getElementById('ngayDi').value = '';
+            document.getElementById('tuyen').value = '';
+            document.getElementById('slKhach').value = 1;
+            document.getElementById('yeuCau').value = '';
+          } else {
+            showMsg('msgDat', res.message || 'Có lỗi xảy ra', false);
+          }
+        })
+        .catch(function (err) {
+          btn.disabled = false;
+          btn.textContent = 'GỬI THÔNG TIN ĐẶT CHỖ';
+          showMsg('msgDat', 'Không kết nối được server: ' + err.message, false);
         });
     }
 
@@ -186,25 +202,26 @@
       }
       document.getElementById('resultList').innerHTML = '';
       document.getElementById('msgTra').style.display = 'none';
-      document.getElementById('btnLookup').disabled = true;
-      document.getElementById('btnLookup').textContent = 'Đang tra...';
+      const btn = document.getElementById('btnLookup');
+      btn.disabled = true;
+      btn.textContent = 'Đang tra...';
 
-      google.script.run
-        .withSuccessHandler(function (results) {
-          document.getElementById('btnLookup').disabled = false;
-          document.getElementById('btnLookup').textContent = 'TRA KẾT QUẢ';
-          if (!results || results.length === 0) {
+      fetch(API_URL + '?action=lookup&sdt=' + encodeURIComponent(sdt))
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          btn.disabled = false;
+          btn.textContent = 'TRA KẾT QUẢ';
+          if (!res.ok || !res.data || res.data.length === 0) {
             showMsg('msgTra', 'Không tìm thấy thông tin đặt chỗ với số điện thoại này.', false);
             return;
           }
-          renderResults(results);
+          renderResults(res.data);
         })
-        .withFailureHandler(function (err) {
-          document.getElementById('btnLookup').disabled = false;
-          document.getElementById('btnLookup').textContent = 'TRA KẾT QUẢ';
-          showMsg('msgTra', 'Có lỗi xảy ra: ' + err.message, false);
-        })
-        .lookupByPhone(sdt);
+        .catch(function (err) {
+          btn.disabled = false;
+          btn.textContent = 'TRA KẾT QUẢ';
+          showMsg('msgTra', 'Không kết nối được server: ' + err.message, false);
+        });
     }
 
     function renderResults(results) {
