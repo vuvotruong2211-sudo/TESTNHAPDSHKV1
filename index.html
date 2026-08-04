@@ -5,59 +5,81 @@
   <meta charset="utf-8">
   <style>
     * { box-sizing: border-box; }
+    :root {
+      --green-dark: #2e6b1f;
+      --green-main: #4a9c2e;
+      --green-light: #eef7ea;
+      --yellow: #ffd400;
+      --yellow-dark: #e0b400;
+      --text: #1a1a1a;
+    }
     body {
       font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #f2f4f7;
+      background: var(--green-light);
       margin: 0;
       padding: 0;
-      color: #1a1a1a;
+      color: var(--text);
     }
     .wrap { max-width: 480px; margin: 0 auto; padding: 16px; }
     .header {
-      background: #0b5ed7;
+      background: linear-gradient(135deg, var(--green-dark), var(--green-main));
       color: white;
-      padding: 18px 16px;
+      padding: 20px 16px 18px;
       text-align: center;
       font-weight: 700;
       font-size: 18px;
     }
-    .header small { display:block; font-weight:400; font-size:12px; opacity:.85; margin-top:4px;}
-    .tabs { display: flex; margin: 16px 0; background:#fff; border-radius: 10px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08);}
+    .header img.logo {
+      width: 72px; height: 72px; display: block; margin: 0 auto 10px;
+      border-radius: 50%;
+      background: white;
+      padding: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .header small { display:block; font-weight:400; font-size:12px; opacity:.9; margin-top:4px;}
+    .tabs { display: flex; margin: 16px 0; background:#fff; border-radius: 10px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08); border: 1px solid #e2ecdc;}
     .tab {
       flex: 1; text-align: center; padding: 12px 0; cursor: pointer;
-      font-weight: 600; font-size: 14px; color:#666; border-bottom: 3px solid transparent;
+      font-weight: 600; font-size: 14px; color:#6b7a63; border-bottom: 3px solid transparent;
     }
-    .tab.active { color: #0b5ed7; border-bottom: 3px solid #0b5ed7; background:#eaf2ff; }
-    .card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom:16px;}
+    .tab.active { color: var(--green-dark); border-bottom: 3px solid var(--yellow); background: var(--green-light); }
+    .card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom:16px; border: 1px solid #e2ecdc;}
     .field { margin-bottom: 14px; }
     label { display:block; font-size: 13px; font-weight:600; margin-bottom:6px; color:#333; }
     input, select, textarea {
-      width: 100%; padding: 11px 12px; border: 1px solid #d7dbe0; border-radius: 8px;
-      font-size: 15px; background:#fbfbfc;
+      width: 100%; padding: 11px 12px; border: 1px solid #d3ddcb; border-radius: 8px;
+      font-size: 15px; background:#fbfcfa;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--green-main); box-shadow: 0 0 0 2px rgba(74,156,46,.15);
     }
     textarea { resize: vertical; min-height: 60px; }
     .btn {
-      width: 100%; padding: 13px; border: none; border-radius: 8px; background: #0b5ed7;
-      color: white; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 4px;
+      width: 100%; padding: 13px; border: none; border-radius: 8px;
+      background: linear-gradient(135deg, var(--yellow-dark), var(--yellow));
+      color: var(--green-dark); font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 4px;
+      letter-spacing: .3px;
     }
-    .btn:disabled { background:#a9c4ea; }
-    .btn.secondary { background:#fff; color:#0b5ed7; border:1px solid #0b5ed7; }
+    .btn:disabled { background:#ecdca0; color:#9a9270; }
+    .btn.secondary { background: var(--green-main); color: white; }
+    .btn.secondary:disabled { background:#a9c99b; }
     .msg { padding:10px 12px; border-radius:8px; font-size:14px; margin-bottom:12px; display:none; }
     .msg.ok { background:#e6f4ea; color:#1e7e34; display:block;}
     .msg.err { background:#fdecec; color:#c0392b; display:block;}
-    .result-item { border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:10px; font-size:14px; }
+    .result-item { border:1px solid #e2ecdc; border-radius:8px; padding:12px; margin-bottom:10px; font-size:14px; }
     .result-item .row { display:flex; justify-content:space-between; padding:3px 0; }
     .result-item .row span:first-child { color:#666; }
     .badge { padding:2px 8px; border-radius:12px; font-size:12px; font-weight:700; }
     .badge.done { background:#e6f4ea; color:#1e7e34; }
-    .badge.pending { background:#fff4e5; color:#b9770e; }
+    .badge.pending { background:#fff8e0; color:#a67c00; }
     .hint { font-size:12px; color:#888; margin-top:2px; }
-    .footer-note { text-align:center; font-size:11px; color:#999; margin-top:20px; }
+    .footer-note { text-align:center; font-size:11px; color:#7a8a70; margin-top:20px; }
   </style>
 </head>
 <body>
   <div class="header">
-    ĐẶT CHỖ XE KHÁCH
+    <img src="logo.png" alt="Tuấn Tú Limousine" class="logo">
+    TUẤN TÚ LIMOUSINE
     <small>Tuyến HCM – Quảng Ngãi / HCM – Đà Lạt</small>
   </div>
 
@@ -70,6 +92,8 @@
     <!-- FORM ĐẶT CHỖ -->
     <div id="panelDat" class="card">
       <div id="msgDat" class="msg"></div>
+      <!-- Honeypot: người thật không thấy ô này, bot tự động điền -> dùng để chặn -->
+      <input type="text" id="website" name="website" style="position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
       <div class="field">
         <label>Số điện thoại *</label>
         <input type="tel" id="sdt" placeholder="09xxxxxxxx" required>
@@ -120,7 +144,7 @@
 
   <script>
     // ⚠️ THAY URL DƯỚI ĐÂY bằng URL Web App Apps Script của anh (kết thúc bằng /exec)
-    const API_URL = "https://script.google.com/macros/s/AKfycbwPWkH7U9emEKcH4xHepV_BRLH7hXwNxLKQSGSTwzn8K6kQDg9oEuE_5_xuo7fKHToI/exec";
+    const API_URL = "https://script.google.com/macros/s/XXXX/exec";
 
     // Lấy mã nhân viên từ query string trên chính link GitHub Pages, ví dụ:
     // https://vuvotruong2211-sudo.github.io/?nv=NV001
@@ -156,6 +180,7 @@
       }
 
       const btn = document.getElementById('btnSubmit');
+      if (btn.disabled) return; // chặn double-click / double-submit
       btn.disabled = true;
       btn.textContent = 'Đang gửi...';
 
@@ -169,7 +194,8 @@
           ngayDi: ngayDi,
           tuyen: tuyen,
           slKhach: slKhach,
-          yeuCau: yeuCau
+          yeuCau: yeuCau,
+          website: document.getElementById('website').value // honeypot
         })
       })
         .then(function (r) { return r.json(); })
